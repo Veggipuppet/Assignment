@@ -277,7 +277,14 @@ GLdouble rotationSpeed = 0.005;
 #define NO_EXIT						222
 
 // 223 Next
-#define PAVEMENT_NEW				240
+//New area Obj
+#define PAVEMENT_NEW				600
+#define WALL_STAIRS					601
+#define NEW_WALL					602
+#define RIGHT_WALL1					603
+#define RIGHT_WALL2					604
+
+
 
 //--------------------------------------------------------------------------------------
 
@@ -354,7 +361,10 @@ void DisplayRoof();
 void DisplayStepBricks ();
 void DisplayLights ();
 void DisplayECL ();
+//new objects
 void DisplayPath ();
+void DisplayStairWall ();
+void DisplayWall ();
 
 // calls functions to create display lists (below)
 void CreateTextureList();
@@ -383,6 +393,7 @@ void DrawAngledRoofBeam2 (int listNo, GLdouble x, GLdouble y, GLdouble z, GLdoub
 void DrawStepBricks ();
 void DrawMapExit ();
 void DrawECL ();
+
 
 
 void BindBridgeWall(GLint LR);
@@ -927,6 +938,8 @@ void DeleteImageFromMemory(unsigned char* tempImage)
 //--------------------------------------------------------------------------------------
 // Load and Create Textures
 //--------------------------------------------------------------------------------------
+
+
 void CreateTextures()
 {
 	glEnable(GL_DEPTH_TEST);
@@ -935,9 +948,13 @@ void CreateTextures()
 	// set texture count
 	tp.SetTextureCount(250);
 
-	//Load New Path Texture
+	//Load NewPath Texture
 	image = tp.LoadTexture("data/pavement.raw", 128, 64);
 	tp.CreateTexture(PAVEMENT_NEW, image, 128, 64);
+
+	image = tp.LoadTexture("data/bricks1.raw", 128, 128);
+	tp.CreateTexture(NEW_WALL, image, 128, 128);
+
 
 	// load and create textures
 	image = tp.LoadTexture("data/abovechanctext.raw", 128, 1024);
@@ -1634,7 +1651,10 @@ void DrawBackdrop()
 	DisplayRedPosts ();
 	DisplayRoof();
 	DisplayStepBricks ();
+	//new Objects:
 	DisplayPath ();
+	DisplayStairWall ();
+	DisplayWall ();
 	if (lightsOn) DisplayLights ();
 }
 
@@ -1841,15 +1861,39 @@ void DisplayPath ()
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(PAVEMENT_NEW));
 
 
-	glCallList(240);
+	glCallList(600);
 }
 
 void DrawPath ()
 {
-	tp.CreateDisplayList(XZ, 240, 128, 64, 6514, 10000, 45616, -31, 62 );
+	tp.CreateDisplayList(XZ, 600, 128, 64, 2608, 10000, 45616, 15.5, 903.125 );
 }
 
+//stair photo(wall) - if we can get photo
+void DisplayStairWall ()
+{
+	glCallList(601);
+}
 
+void DrawStairWall ()
+{
+	tp.CreateDisplayList (XY, 601, 1, 1, 6514, 10000, 45616, -1953, 2000);
+	
+}
+
+void DisplayWall ()
+{
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
+	glCallList(602);
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
+	glCallList(603);
+}
+
+void DrawWall ()
+{
+	tp.CreateDisplayList (YZ, 602, 128, 128, 4561, 10000, 45616, 3, 452);
+	tp.CreateDisplayList (YZ, 603, 128, 128, 2608, 10000, 45616, 3, 452);
+}
 
 
 //--------------------------------------------------------------------------------------
@@ -2790,7 +2834,7 @@ void DrawPavement ()
 	tp.CreateDisplayList (XZ, 428, 128.0, 64.0,  34256.0, 10000.0, 26704.0, 1.0, 9.5); // phys sci doorway (behind carpet)
 	//
 
-	//PAVEMENT_NEW
+	
 	
 
 
@@ -5152,7 +5196,12 @@ void CreateTextureList()
 	DrawStepBricks ();			// 478-507
 	DrawCylinders ();			// 437-441
 	DrawMapExit ();				// 448-449, 454
-	DrawPath ();				// 455-459
+	// 455-459
+
+	//New objects from 600 onwards
+	DrawPath ();				//600
+	DrawStairWall ();			//601
+	DrawWall ();				//602
 }
 
 
