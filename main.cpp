@@ -283,7 +283,8 @@ GLdouble rotationSpeed = 0.005;
 #define NEW_WALL					602
 #define RIGHT_WALL1					603
 #define RIGHT_WALL2					604
-
+#define COLUMNS_XY					605
+#define COLUMNS_ZY					606
 
 
 //--------------------------------------------------------------------------------------
@@ -365,6 +366,7 @@ void DisplayECL ();
 void DisplayPath ();
 void DisplayStairWall ();
 void DisplayWall ();
+void DisplayColumns ();
 
 // calls functions to create display lists (below)
 void CreateTextureList();
@@ -868,7 +870,8 @@ void CreateBoundingBoxes()
 	cam.SetAABBMinX(16, 31444.0);
 	cam.SetAABBMaxZ(16, 10395.0);
 	cam.SetAABBMinZ(16, 4590.0);
-}
+
+	}
 
 //--------------------------------------------------------------------------------------
 // Set up co-ordinates of different plains
@@ -902,6 +905,9 @@ void CreatePlains()
 	cam.SetPlains (XY_PLAIN, 10000.0, 14000.0 , 10650.0, 10875.0, 23000.0, 36000.0);
 	cam.SetPlains (XY_PLAIN, 18000.0, 22000.0 , 10875.0, 10650.0, 23000.0, 36000.0);
 
+	//NEW AREA PLANE
+	cam.SetPlains (FLAT_PLAIN, 4561.0, 18000.0 , 10000.0, 10000.0, 45616.0, 103416);
+
 	//entance steps
 	step = 10450.0;
 	stepLength = 9808.0;
@@ -918,7 +924,7 @@ void CreatePlains()
 	}
 
 	// temp plain to take down to ECL1
-	cam.SetPlains (ZY_PLAIN, 3200.0, 4800.0 , 10450.0, 9370.0, 53400.0, 57900.0);
+	//cam.SetPlains (ZY_PLAIN, 3200.0, 4800.0 , 10450.0, 9370.0, 53400.0, 57900.0);
 }
 
 //--------------------------------------------------------------------------------------
@@ -1859,8 +1865,6 @@ void DrawChancPosts ()
 void DisplayPath ()
 {
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(PAVEMENT_NEW));
-
-
 	glCallList(600);
 }
 
@@ -1881,21 +1885,65 @@ void DrawStairWall ()
 	
 }
 
+
+//Wall to new area
 void DisplayWall ()
 {
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
 	glCallList(602);
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
 	glCallList(603);
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
+	glCallList(604);
 }
 
 void DrawWall ()
 {
-	tp.CreateDisplayList (YZ, 602, 128, 128, 4561, 10000, 45616, 3, 452);
-	tp.CreateDisplayList (YZ, 603, 128, 128, 2608, 10000, 45616, 3, 452);
+	tp.CreateDisplayList (YZ, 602, 128, 128, 4561, 10000, 45616, 3, 452);		//Left wall
+	tp.CreateDisplayList (YZ, 603, 128, 128, 2608, 10000, 45616, 3, 7.8125);	//first right wall
+	tp.CreateDisplayList (YZ, 604, 128, 128, 2608, 10000, 56916, 3, 352);		//second right wall
 }
 
+//columns to new area
+/*
+void DisplayColumns ()
+{
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+	step = 0.0;
+	for (int i = 0; i < 7; i++)
+	{		
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+		glPushMatrix();	
+			glTranslatef(step, 0.0, 30880.0);
+			glCallList(18);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(step, 0.0, 31008.0);
+			glCallList(18);
+		glPopMatrix();
+		
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST_2));
+		glPushMatrix();
+			glTranslatef(step, 0.0, 30880.0);
+			glCallList(19);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(step + 128.0, 0.0, 30880.0);
+			glCallList(19);
+		glPopMatrix();
+		step -= 1940.0;
+	}
+}
 
+void DrawColumns ()
+{
+	tp.CreateDisplayList (XY, 605, 128.0, 256.0, 4561.0, 10000, 45616, -1.0, 4.48); //front
+	tp.CreateDisplayList (YZ, 606, 256.0, 128.0, 4561.0, 10000, 45616, 4.48, -1.0); //left 
+	tp.CreateDisplayList (XY, 605, 128.0, 256.0, 4261.0, 10000, 45316, 1.0, 6.2);	//back   
+	tp.CreateDisplayList (YZ, 606, 256.0, 128.0, 4261.0, 10000, 45316, 6.2, 1.0);	//right	
+
+}
+*/
 //--------------------------------------------------------------------------------------
 // Display Door Posts
 //--------------------------------------------------------------------------------------
@@ -1939,10 +1987,11 @@ void DrawDoorPosts ()
 {
 	// DOORPOSTS_CHANC
 	tp.CreateDisplayList (YZ_FLIP, 25, 1024.0, 128.0, 33848.0, 10000.0, 10465.0, 0.83, 0.7344);	// post
-	tp.CreateDisplayList (YZ, 26, 1024.0, 128.0, 33848.0, 10000.0, 11425.0, 0.83, 0.7344);
+	tp.CreateDisplayList (YZ,26, 1024.0, 128.0, 33848.0, 10000.0, 11425.0, 0.83, 0.7344);
 	tp.CreateDisplayList (XY, 27, 64.0, 1024.0, 33848.0, 10000.0, 10559.0, 1.0, 1.0);	// sidepost
 	tp.CreateDisplayList (YZ_FLIP, 199, 1024.0, 128.0, 33848.0, 10000.0, 10465.0, 0.83, 0.7344);	// post
 }
+
 
 //--------------------------------------------------------------------------------------
 // Display blocks above Windows and Posts
