@@ -693,10 +693,16 @@ void keys(unsigned char key, int x, int y)
 		case 'J':
 		{
 <<<<<<< HEAD
+<<<<<<< HEAD
 			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;		
 		}
 
 		
+=======
+			// Display coordinates xyz
+			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;
+		}
+>>>>>>> master
 =======
 			// Display coordinates xyz
 			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;
@@ -5878,6 +5884,9 @@ void CreateTextureList()
 	DrawMazeGround();			// 455
 	DrawMazeWall();				// 456,457
 	// 458-459
+<<<<<<< HEAD
+>>>>>>> master
+=======
 >>>>>>> master
 }
 
@@ -5901,6 +5910,9 @@ void IncrementFrameCount()
 =======
 		stepIncrement = t/frameCount * 10000;
 		angleIncrement = t/frameCount * 3;
+<<<<<<< HEAD
+>>>>>>> master
+=======
 >>>>>>> master
 		frameCount = 0;
 		lastClock = clock();
