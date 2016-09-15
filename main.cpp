@@ -287,6 +287,12 @@ GLdouble rotationSpeed = 0.005;
 #define WALL_JUT					607
 #define COLUMNS_XY					605
 #define COLUMNS_ZY					606
+#define ROOF1						609
+#define ROOF_LEFT					610
+#define ROOF_RIGHT					611
+#define ROOF_LEFT1					612
+#define ROOF_RIGHT1					613
+#define HORIZONTAL_POST				614
 
 
 //--------------------------------------------------------------------------------------
@@ -683,6 +689,13 @@ void keys(unsigned char key, int x, int y)
 		}
 		break;
 		
+		case 'j':
+		case 'J':
+		{
+			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;		
+		}
+
+		
 	}
 }
 
@@ -962,6 +975,8 @@ void CreateTextures()
 
 	image = tp.LoadTexture("data/bricks1.raw", 128, 128);
 	tp.CreateTexture(NEW_WALL, image, 128, 128);
+
+
 
 
 	// load and create textures
@@ -1894,7 +1909,7 @@ void DrawPath ()
 void DisplayStairWall ()
 {
 	glCallList(601);
-	
+
 }
 
 void DrawStairWall ()
@@ -1931,6 +1946,48 @@ void DrawWall ()
 void DisplayColumns ()
 {
 	//glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+
+	step = 0.0;
+	for (int i = 0; i < 8; i++)
+	{	
+		//Columns on the left of the new walkway
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+		glPushMatrix();	
+			glTranslatef(0.0, 900.0, step);
+			glRotatef(90.0, 6614.0, 10200.0, 45316.0);
+			glCallList(614);
+		glPopMatrix();
+
+		/*
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step - 128.0);
+			glCallList(605);
+		glPopMatrix();
+
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST_2));
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(- 128.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		
+		if( step == 0)
+		{
+			step = 3128;
+		}
+		else if (i == 6)
+		{
+			step = step + 3128;
+		}			
+		else
+		{
+			step = step + 10128;
+		}*/
+	}
+
 	step = 0.0;
 	for (int i = 0; i < 8; i++)
 	{	
@@ -2011,7 +2068,7 @@ void DrawColumns ()
 	
 	tp.CreateDisplayList (XY, 605, 128.0, 256.0, 4561.0, 10000, 45616, -1.0, 6); //front
 	tp.CreateDisplayList (YZ, 606, 256.0, 128.0, 4561.0, 10000, 45616, 6, -1.0); //left 
-	//tp.CreateDisplayList (XY, 605, 128.0, 256.0, 4261.0, 10000, 45316, 1.0, 6.2);	//back   
+	tp.CreateDisplayList (XY, 614, 128.0, 256.0, 6614.0, 10200, 45316, 2.0, 1.0);	//back   
 	//tp.CreateDisplayList (YZ, 606, 256.0, 128.0, 4261.0, 10000, 45316, 6.2, 1.0);	//right	
 
 }
@@ -3346,6 +3403,35 @@ void DisplayRoof()
 	// main roof planks
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_PLANKS));
 	for (int i = 250; i < 253; i++) glCallList(i);
+
+	//new roofing tectures
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_PLANKS));
+	for (int i = 609; i < 614; i ++) glCallList(i);
+	step = 0;
+	
+		for (int i = 0; i < 22; i++)
+	{	
+		//Columns on the left of the new walkway
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_PLANKS));
+		glPushMatrix();	
+			glTranslatef(0.0, 0.0, step);
+			glCallList(610);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step);
+			glCallList(611);
+		glPopMatrix();
+
+		if( i == 20)
+		{
+			step = step + 428;
+		}
+		else
+		{
+			step = step + 2688;
+		}
+
+	}
 	
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_BEAM_1));
 	// corner beams
@@ -3650,6 +3736,77 @@ void DrawRoof()
 			glVertex3f(33848.0, 12065.28, 22046.0);
 		glEnd();
 	glEndList();
+
+	//the new roofing ---------------------------------------------
+	//first roof
+	glNewList(609, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(6514.0, 12166.0, 42916.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(6514, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(2608, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(2608.0, 12166.0, 42916.0);
+		glEnd();
+	glEndList();
+
+	//Left roof
+	glNewList(610, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(4561.0, 11066, 45616.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(4561.0, 11066, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(3734.5, 11366.0, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(3734.5, 11366.0, 45616.0);
+		glEnd();
+	glEndList();
+
+	//right roof
+	glNewList(611, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(2908.0, 11066, 45616.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(2908.0, 11066, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(3734.5, 11366.0, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(3734.5, 11366.0, 45616.0);
+		glEnd();
+	glEndList();
+
+	glNewList(612, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(6514.0, 12166.0, 42916.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(6514, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(2608, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(2608.0, 12166.0, 42916.0);
+		glEnd();
+	glEndList();
+
+	glNewList(613, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(6514.0, 12166.0, 42916.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(6514, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(2608, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(2608.0, 12166.0, 42916.0);
+		glEnd();
+	glEndList();
+	//------------------------------------------------------------------
+
 	// Chanc Side Beams Bottom (between phys sci and chanc)
 	glNewList(254, GL_COMPILE);
 		glBegin(GL_QUADS);
@@ -5340,7 +5497,7 @@ void IncrementFrameCount()
 	// reset after t
 	if (t > 0.1)
 	{
-		stepIncrement = t/frameCount * 34000;
+		stepIncrement = t/frameCount * 24000;
 		angleIncrement = t/frameCount * 1.5;
 		frameCount = 0;
 		lastClock = clock();
