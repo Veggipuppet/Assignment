@@ -3,7 +3,7 @@
 // #include <GL/glut.h> multiple included, first included in aabb, aabbll, plainnode, cammap, texpol
 #include <time.h>
 
-#include <windows.h> // only used if mouse is required (not portable)
+//#include <windows.h> // only used if mouse is required (not portable)
 #include "camera.h"
 #include "texturedPolygons.h"
 
@@ -277,6 +277,22 @@ GLdouble rotationSpeed = 0.005;
 #define NO_EXIT						222
 
 // 223 Next
+//New area Obj
+#define PAVEMENT_NEW				600
+#define PAVEMENT_NEW2				608
+#define WALL_STAIRS					601
+#define NEW_WALL					602
+#define RIGHT_WALL1					603
+#define RIGHT_WALL2					604
+#define WALL_JUT					607
+#define COLUMNS_XY					605
+#define COLUMNS_ZY					606
+#define ROOF1						609
+#define ROOF_LEFT					610
+#define ROOF_RIGHT					611
+#define ROOF_LEFT1					612
+#define ROOF_RIGHT1					613
+#define HORIZONTAL_POST				614
 
 
 //--------------------------------------------------------------------------------------
@@ -354,8 +370,11 @@ void DisplayRoof();
 void DisplayStepBricks ();
 void DisplayLights ();
 void DisplayECL ();
-void DisplayMazeGround();
-void DisplayMazeWall();
+//new objects
+void DisplayPath ();
+void DisplayStairWall ();
+void DisplayWall ();
+void DisplayColumns ();
 
 // calls functions to create display lists (below)
 void CreateTextureList();
@@ -384,8 +403,7 @@ void DrawAngledRoofBeam2 (int listNo, GLdouble x, GLdouble y, GLdouble z, GLdoub
 void DrawStepBricks ();
 void DrawMapExit ();
 void DrawECL ();
-void DrawMazeGround();
-void DrawMazeWall();
+
 
 
 void BindBridgeWall(GLint LR);
@@ -427,9 +445,9 @@ int main(int argc, char **argv)
 	glutIdleFunc(Display);
 	glutMouseFunc(Mouse);
 	
-	// CONTROL BY KEY CASES BELOW
-	// glutPassiveMotionFunc(NULL);
-	// ShowCursor(FALSE);
+	// ONLY USE IF REQUIRE MOUSE MOVEMENT
+	//glutPassiveMotionFunc(mouseMove);
+	//ShowCursor(FALSE);
 
 	glutReshapeFunc(reshape);
 	glutMainLoop();
@@ -490,15 +508,9 @@ void Display()
 	glEnable (GL_TEXTURE_2D);
 	glPushMatrix();	
 		// displays the welcome screen
-		if (DisplayWelcome){
-			cam.DisplayWelcomeScreen(width, height, 1, tp.GetTexture(WELCOME));
-		}
-
+		if (DisplayWelcome) cam.DisplayWelcomeScreen (width, height, 1, tp.GetTexture(WELCOME));	
 		// displays the exit screen
-		if (DisplayExit){
-			cam.DisplayWelcomeScreen(width, height, 0, tp.GetTexture(EXIT));
-		}
-
+		if (DisplayExit) cam.DisplayWelcomeScreen (width, height, 0, tp.GetTexture(EXIT) );
 		// displays the map
 		if (DisplayMap) cam.DisplayMap(width, height, tp.GetTexture(MAP));
 		// display no exit sign (position check should really be in an object, but didn't have time)
@@ -625,8 +637,6 @@ void keys(unsigned char key, int x, int y)
 		// exit tour (escape key)
 		case 27:
 			{
-				glutPassiveMotionFunc(NULL);
-				ShowCursor(TRUE);
 				cam.SetRotateSpeed (0.0f);
 				cam.SetMoveSpeed (0.0f);
 				DisplayExit = true;
@@ -637,16 +647,12 @@ void keys(unsigned char key, int x, int y)
 			{
 				if (DisplayWelcome)
 				{
-					glutPassiveMotionFunc(mouseMove);
-					ShowCursor(FALSE);
 					cam.SetRotateSpeed (rotationSpeed);
 					cam.SetMoveSpeed (movementSpeed);
 					DisplayWelcome = false;
 				}
 				else
 				{
-					glutPassiveMotionFunc(NULL);
-					ShowCursor(TRUE);
 					cam.SetRotateSpeed (0.0f);
 					cam.SetMoveSpeed (0.0f);
 					DisplayWelcome = true;
@@ -686,9 +692,22 @@ void keys(unsigned char key, int x, int y)
 		case 'j':
 		case 'J':
 		{
+<<<<<<< HEAD
+<<<<<<< HEAD
+			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;		
+		}
+
+		
+=======
 			// Display coordinates xyz
 			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;
 		}
+>>>>>>> master
+=======
+			// Display coordinates xyz
+			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;
+		}
+>>>>>>> master
 	}
 }
 
@@ -737,20 +756,19 @@ void Mouse(int button, int state, int x, int y)
 //--------------------------------------------------------------------------------------
 void mouseMove(int x, int y)
 {
-	int test = 3;
 		if (x < 0)
 			cam.DirectionRotateLR(0);
 		else if (x > width)
 			cam.DirectionRotateLR(0);
 		else if (x > width/2.0)
 		{
-			cam.DirectionRotateLR(1*test);
+			cam.DirectionRotateLR(1);
 			Display();
 			glutWarpPointer(width/2.0,height/2.0);
 		}
 		else if (x < width/2.0)
 		{
-			cam.DirectionRotateLR(-1*test);
+			cam.DirectionRotateLR(-1);
 			Display();
 			glutWarpPointer(width/2.0,height/2.0);
 		}
@@ -760,12 +778,12 @@ void mouseMove(int x, int y)
 			cam.DirectionLookUD(0);
 
 		else if (y > height/2.0) {
-			cam.DirectionLookUD(-1*test);
+			cam.DirectionLookUD(-1);
 			Display();
 			glutWarpPointer(width/2.0,height/2.0);
 		}
 		else if (y < height/2.0) {
-			cam.DirectionLookUD(1*test);
+			cam.DirectionLookUD(1);
 			Display();
 			glutWarpPointer(width/2.0,height/2.0);
 		}
@@ -880,7 +898,8 @@ void CreateBoundingBoxes()
 	cam.SetAABBMinX(16, 31444.0);
 	cam.SetAABBMaxZ(16, 10395.0);
 	cam.SetAABBMinZ(16, 4590.0);
-}
+
+	}
 
 //--------------------------------------------------------------------------------------
 // Set up co-ordinates of different plains
@@ -914,6 +933,9 @@ void CreatePlains()
 	cam.SetPlains (XY_PLAIN, 10000.0, 14000.0 , 10650.0, 10875.0, 23000.0, 36000.0);
 	cam.SetPlains (XY_PLAIN, 18000.0, 22000.0 , 10875.0, 10650.0, 23000.0, 36000.0);
 
+	//NEW AREA PLANE
+	cam.SetPlains (FLAT_PLAIN, 4561.0, 18000.0 , 10000.0, 10000.0, 45616.0, 103416);
+
 	//entance steps
 	step = 10450.0;
 	stepLength = 9808.0;
@@ -930,7 +952,7 @@ void CreatePlains()
 	}
 
 	// temp plain to take down to ECL1
-	cam.SetPlains (ZY_PLAIN, 3200.0, 4800.0 , 10450.0, 9370.0, 53400.0, 57900.0);
+	//cam.SetPlains (ZY_PLAIN, 3200.0, 4800.0 , 10450.0, 9370.0, 53400.0, 57900.0);
 }
 
 //--------------------------------------------------------------------------------------
@@ -950,6 +972,8 @@ void DeleteImageFromMemory(unsigned char* tempImage)
 //--------------------------------------------------------------------------------------
 // Load and Create Textures
 //--------------------------------------------------------------------------------------
+
+
 void CreateTextures()
 {
 	glEnable(GL_DEPTH_TEST);
@@ -957,6 +981,16 @@ void CreateTextures()
 	
 	// set texture count
 	tp.SetTextureCount(250);
+
+	//Load NewPath Texture
+	image = tp.LoadTexture("data/pavement.raw", 128, 64);
+	tp.CreateTexture(PAVEMENT_NEW, image, 128, 64);
+
+	image = tp.LoadTexture("data/bricks1.raw", 128, 128);
+	tp.CreateTexture(NEW_WALL, image, 128, 128);
+
+
+
 
 	// load and create textures
 	image = tp.LoadTexture("data/abovechanctext.raw", 128, 1024);
@@ -1653,8 +1687,11 @@ void DrawBackdrop()
 	DisplayRedPosts ();
 	DisplayRoof();
 	DisplayStepBricks ();
-	DisplayMazeGround();
-	DisplayMazeWall();
+	//new Objects:
+	DisplayPath ();
+	DisplayStairWall ();
+	DisplayWall ();
+	DisplayColumns ();
 	if (lightsOn) DisplayLights ();
 }
 
@@ -1851,6 +1888,204 @@ void DrawChancPosts ()
 
 }
 
+
+
+//display path to new area
+
+
+void DisplayPath ()
+{
+	//glBindTexture(GL_TEXTURE_2D, tp.GetTexture(PAVEMENT_NEW));
+	//glCallList(600);
+	step = 0;
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(PAVEMENT_NEW));
+		glPushMatrix();	
+			glTranslatef(0.0, 0.0, 0.0);
+			glCallList(600);
+		glPopMatrix();
+
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(PAVEMENT_NEW));
+		glPushMatrix();	
+			glTranslatef(0.0, 0.0, 0.0);
+			glCallList(608);
+		glPopMatrix();
+}
+
+void DrawPath ()
+{
+	tp.CreateDisplayList(XZ, 600, 128, 64, 2608, 10000, 45616, 15.5, 903.125 );
+	tp.CreateDisplayList(XZ, 608, 128, 64, 2608, 10000, 102512, 62.5, 62.5 );
+
+}
+
+//stair photo(wall) - if we can get photo
+void DisplayStairWall ()
+{
+	glCallList(601);
+
+}
+
+void DrawStairWall ()
+{
+	tp.CreateDisplayList (XY, 601, 1, 1, 6514, 10000, 45616, -1953, 2000);
+	
+}
+
+
+//Wall to new area
+void DisplayWall ()
+{
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
+	glCallList(602);
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
+	glCallList(603);
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
+	glCallList(604);
+
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(NEW_WALL));
+	glCallList(607);
+}
+
+void DrawWall ()
+{
+	tp.CreateDisplayList (YZ, 602, 128, 128, 4561, 10000, 45616, 3, 444);		//Left wall
+	tp.CreateDisplayList (YZ, 603, 128, 128, 2908, 10000, 45616, 3, 24.4);		//first right wall
+	tp.CreateDisplayList (YZ, 604, 128, 128, 2908, 10000, 58872, 3, 340);		//second right wall
+	tp.CreateDisplayList (XY, 607, 128, 128, 2908, 10000, 45616, -4, 3 );		//wall jut
+}
+
+//columns to new area
+
+void DisplayColumns ()
+{
+	//glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+
+	step = 0.0;
+	for (int i = 0; i < 8; i++)
+	{	
+		//Columns on the left of the new walkway
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+		glPushMatrix();	
+			glTranslatef(0.0, 900.0, step);
+			glRotatef(90.0, 6614.0, 10200.0, 45316.0);
+			glCallList(614);
+		glPopMatrix();
+
+		/*
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step - 128.0);
+			glCallList(605);
+		glPopMatrix();
+
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST_2));
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(- 128.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		
+		if( step == 0)
+		{
+			step = 3128;
+		}
+		else if (i == 6)
+		{
+			step = step + 3128;
+		}			
+		else
+		{
+			step = step + 10128;
+		}*/
+	}
+
+	step = 0.0;
+	for (int i = 0; i < 8; i++)
+	{	
+		//Columns on the left of the new walkway
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+		glPushMatrix();	
+			glTranslatef(0.0, 0.0, step);
+			glCallList(605);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step - 128.0);
+			glCallList(605);
+		glPopMatrix();
+		
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST_2));
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(- 128.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		
+		if( step == 0)
+		{
+			step = 3128;
+		}
+		else if (i == 6)
+		{
+			step = step + 3128;
+		}			
+		else
+		{
+			step = step + 10128;
+		}
+	}
+
+step = 3128.0;
+	for (int i = 0; i < 7; i++)
+	{	
+		//Columns on the right of the new walkway
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST));
+		glPushMatrix();	
+			glTranslatef(-1525.0, 0.0, step);
+			glCallList(605);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(-1525.0, 0.0, step - 128.0);
+			glCallList(605);
+		glPopMatrix();
+		
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(MAIN_POST_2));
+		glPushMatrix();
+			glTranslatef(-1525.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(-1525.0 - 128.0, 0.0, step);
+			glCallList(606);
+		glPopMatrix();
+		
+		if (i == 5)
+		{
+			step = step + 3128;
+		}			
+		else
+		{
+			step = step + 10128;
+		}
+	}
+
+
+}
+
+void DrawColumns ()
+{
+	
+	tp.CreateDisplayList (XY, 605, 128.0, 256.0, 4561.0, 10000, 45616, -1.0, 6); //front
+	tp.CreateDisplayList (YZ, 606, 256.0, 128.0, 4561.0, 10000, 45616, 6, -1.0); //left 
+	tp.CreateDisplayList (XY, 614, 128.0, 256.0, 6614.0, 10200, 45316, 2.0, 1.0);	//back   
+	//tp.CreateDisplayList (YZ, 606, 256.0, 128.0, 4261.0, 10000, 45316, 6.2, 1.0);	//right	
+
+}
+
 //--------------------------------------------------------------------------------------
 // Display Door Posts
 //--------------------------------------------------------------------------------------
@@ -1894,10 +2129,11 @@ void DrawDoorPosts ()
 {
 	// DOORPOSTS_CHANC
 	tp.CreateDisplayList (YZ_FLIP, 25, 1024.0, 128.0, 33848.0, 10000.0, 10465.0, 0.83, 0.7344);	// post
-	tp.CreateDisplayList (YZ, 26, 1024.0, 128.0, 33848.0, 10000.0, 11425.0, 0.83, 0.7344);
+	tp.CreateDisplayList (YZ,26, 1024.0, 128.0, 33848.0, 10000.0, 11425.0, 0.83, 0.7344);
 	tp.CreateDisplayList (XY, 27, 64.0, 1024.0, 33848.0, 10000.0, 10559.0, 1.0, 1.0);	// sidepost
 	tp.CreateDisplayList (YZ_FLIP, 199, 1024.0, 128.0, 33848.0, 10000.0, 10465.0, 0.83, 0.7344);	// post
 }
+
 
 //--------------------------------------------------------------------------------------
 // Display blocks above Windows and Posts
@@ -2789,6 +3025,10 @@ void DrawPavement ()
 	tp.CreateDisplayList (XZ, 428, 128.0, 64.0,  34256.0, 10000.0, 26704.0, 1.0, 9.5); // phys sci doorway (behind carpet)
 	//
 
+	
+	
+
+
 	// PAVEMENT_TOP
 	tp.CreateDisplayList (XZ, 74, 64.0, 128.0, 4912.0, 10000.0, 40880.0, 416.5, 17.0);
 	tp.CreateDisplayList (XZ, 246, 64.0, 128.0, 32656.0, 10000.0, 42928.0, 15.0, 2.0); // gcl1 door way
@@ -3176,6 +3416,35 @@ void DisplayRoof()
 	// main roof planks
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_PLANKS));
 	for (int i = 250; i < 253; i++) glCallList(i);
+
+	//new roofing tectures
+	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_PLANKS));
+	for (int i = 609; i < 614; i ++) glCallList(i);
+	step = 0;
+	
+		for (int i = 0; i < 22; i++)
+	{	
+		//Columns on the left of the new walkway
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_PLANKS));
+		glPushMatrix();	
+			glTranslatef(0.0, 0.0, step);
+			glCallList(610);
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(0.0, 0.0, step);
+			glCallList(611);
+		glPopMatrix();
+
+		if( i == 20)
+		{
+			step = step + 428;
+		}
+		else
+		{
+			step = step + 2688;
+		}
+
+	}
 	
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(ROOF_BEAM_1));
 	// corner beams
@@ -3480,6 +3749,77 @@ void DrawRoof()
 			glVertex3f(33848.0, 12065.28, 22046.0);
 		glEnd();
 	glEndList();
+
+	//the new roofing ---------------------------------------------
+	//first roof
+	glNewList(609, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(6514.0, 12166.0, 42916.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(6514, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(2608, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(2608.0, 12166.0, 42916.0);
+		glEnd();
+	glEndList();
+
+	//Left roof
+	glNewList(610, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(4561.0, 11066, 45616.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(4561.0, 11066, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(3734.5, 11366.0, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(3734.5, 11366.0, 45616.0);
+		glEnd();
+	glEndList();
+
+	//right roof
+	glNewList(611, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(2908.0, 11066, 45616.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(2908.0, 11066, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(3734.5, 11366.0, 45616.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(3734.5, 11366.0, 45616.0);
+		glEnd();
+	glEndList();
+
+	glNewList(612, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(6514.0, 12166.0, 42916.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(6514, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(2608, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(2608.0, 12166.0, 42916.0);
+		glEnd();
+	glEndList();
+
+	glNewList(613, GL_COMPILE);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(6514.0, 12166.0, 42916.0);
+			glTexCoord2f(0.0, 25.79);
+			glVertex3f(6514, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 25.79);
+			glVertex3f(2608, 11366.0, 42916.0 + (128.0 * 21.0));
+			glTexCoord2f(15.82, 0.0);
+			glVertex3f(2608.0, 12166.0, 42916.0);
+		glEnd();
+	glEndList();
+	//------------------------------------------------------------------
+
 	// Chanc Side Beams Bottom (between phys sci and chanc)
 	glNewList(254, GL_COMPILE);
 		glBegin(GL_QUADS);
@@ -5121,6 +5461,8 @@ void DrawMapExit ()
 }
 
 //--------------------------------------------------------------------------------------
+<<<<<<< HEAD
+=======
 //  Maze
 //--------------------------------------------------------------------------------------
 
@@ -5503,6 +5845,7 @@ void DrawMazeWall(){
 }
 
 //--------------------------------------------------------------------------------------
+>>>>>>> master
 //  Create display lists
 //	Numbers indicate list numbers
 //--------------------------------------------------------------------------------------
@@ -5529,9 +5872,22 @@ void CreateTextureList()
 	DrawStepBricks ();			// 478-507
 	DrawCylinders ();			// 437-441
 	DrawMapExit ();				// 448-449, 454
+<<<<<<< HEAD
+	// 455-459
+
+	//New objects from 600 onwards
+	DrawPath ();				//600
+	DrawStairWall ();			//601
+	DrawWall ();				//602
+	DrawColumns ();				//604,605
+=======
 	DrawMazeGround();			// 455
 	DrawMazeWall();				// 456,457
 	// 458-459
+<<<<<<< HEAD
+>>>>>>> master
+=======
+>>>>>>> master
 }
 
 
@@ -5548,8 +5904,16 @@ void IncrementFrameCount()
 	// reset after t
 	if (t > 0.1)
 	{
+<<<<<<< HEAD
+		stepIncrement = t/frameCount * 24000;
+		angleIncrement = t/frameCount * 1.5;
+=======
 		stepIncrement = t/frameCount * 10000;
 		angleIncrement = t/frameCount * 3;
+<<<<<<< HEAD
+>>>>>>> master
+=======
+>>>>>>> master
 		frameCount = 0;
 		lastClock = clock();
 	}
