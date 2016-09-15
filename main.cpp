@@ -683,6 +683,12 @@ void keys(unsigned char key, int x, int y)
 		}
 		break;
 		
+		case 'j':
+		case 'J':
+		{
+			// Display coordinates xyz
+			std::cout << cam.GetLR() << "\t" << cam.GetUD() << "\t" << cam.GetFB() << std::endl;
+		}
 	}
 }
 
@@ -819,6 +825,7 @@ void CreateBoundingBoxes()
 	cam.SetAABBMinX(7, 34704.0);
 	cam.SetAABBMaxZ(7, 25344.0);
 	cam.SetAABBMinZ(7, 24996.0);
+	
 		
 	// bottom of steps
 	cam.SetAABBMaxX(8, 33808.0);
@@ -5118,8 +5125,11 @@ void DrawMapExit ()
 //--------------------------------------------------------------------------------------
 
 void DisplayMazeGround(){
-	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(GRASS));
-	glCallList(455);
+	glPushMatrix();
+		glTranslatef(1280.0 * 5, -1280.0, 1280.0 * 5);
+		glBindTexture(GL_TEXTURE_2D, tp.GetTexture(GRASS));
+		glCallList(455);
+	glPopMatrix();
 }
 
 void DrawMazeGround(){
@@ -5135,23 +5145,361 @@ void DrawMazeGround(){
 	glEndList();
 	*/
 
-	tp.CreateDisplayList(XZ, 455, 256.0, 256.0, 6514.0, 10000.0, 46744.0, 200.0, 200.0);
+	tp.CreateDisplayList(XZ, 455, 256.0, 256.0, 6514.0, 10000.0, 46744.0, 90.0, 100.0);
 }
 
 void DisplayMazeWall(){
+	int times = 2;
+
+	glPushMatrix();
+	glTranslatef(1280.0 * 5, -1280.0, 1280.0 * 5);
+
+	    // All YZ Walls
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(WALL_BRICK_YZ));
-	glCallList(456);
-	glCallList(457);
+	glPushMatrix();
+		// wall no. 1
+		glPushMatrix();
+			for (int i = 0; i < 10 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+		// 2
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 3
+			glTranslatef(0.0, 0.0, 1280.0 * times);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		glPopMatrix();
+
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+		// 4
+			glTranslatef(0.0, 0.0, 1280.0 * times);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 5
+			glTranslatef(0.0, 0.0, 1280.0 * times);
+			for (int i = 0; i < 3 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 6
+			glTranslatef(0.0, 0.0, 1280.0 * times);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+		// 7
+			glTranslatef(0.0, 0.0, 1280.0 * 2 * times);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 8
+			glTranslatef(0.0, 0.0, 1280.0 * times);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 9
+			glTranslatef(0.0, 0.0, 1280.0 * 2 * times);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+		// 10
+			glTranslatef(0.0, 0.0, 1280.0 * 1 * times);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 11
+			glTranslatef(0.0, 0.0, 1280.0 * 4 * times);
+			for (int i = 0; i < 3 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+		// 12
+			glTranslatef(0.0, 0.0, 1280.0 * 5 * times);
+			for (int i = 0; i < 3 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+			glPopMatrix();
+
+			glTranslatef(1280.0 * times, 0.0, 0.0);
+			glPushMatrix();
+		// 13
+			glTranslatef(0.0, 0.0, 1280.0 * 3 * times);
+			for (int i = 0; i < 4 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 14
+			glTranslatef(0.0, 0.0, 1280.0 * times);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+		// 15
+			glTranslatef(0.0, 0.0, 1280.0 * 2 * times);
+			for (int i = 0; i < 4 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 16
+			glTranslatef(0.0, 0.0, 1280.0 * 3 * times);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+		// 17
+			glTranslatef(0.0, 0.0, 1280.0 * 2 * times);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 18
+			glTranslatef(0.0, 0.0, 1280.0 * 1 * times);
+			for (int i = 0; i < 3 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+
+		// 19
+			glTranslatef(0.0, 0.0, 1280.0 * 1 * times);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(1280.0 * times, 0.0, 0.0);
+		glPushMatrix();
+		// 20
+			for (int i = 0; i < 9 * times; i++){
+				glCallList(456);
+				glTranslatef(0.0, 0.0, 1280.0);
+			}
+		glPopMatrix();
+
+	glPopMatrix();
+
+	// All XY Walls
 	glBindTexture(GL_TEXTURE_2D, tp.GetTexture(WALL_BRICK_XY));
-	glCallList(458);
-	glCallList(459);
+	glPushMatrix();
+
+		glPushMatrix();
+		// wall no. 21
+			glTranslatef(1280.0 * times, 0.0, 0.0);
+			for (int i = 0; i < 8 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 22
+			glTranslatef(1280.0 * 2 * times, 0.0, 0.0);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+
+		// 23
+			glTranslatef(1280.0 * 2 * times, 0.0, 0.0);
+			for (int i = 0; i < 4 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 24
+			glTranslatef(1280.0 * 3 * times, 0.0, 0.0);
+			for (int i = 0; i < 4 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 25
+			glTranslatef(1280.0 * 1 * times, 0.0, 0.0);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+
+		// 26
+			glTranslatef(1280.0 * 2 * times, 0.0, 0.0);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		
+		// 27
+			glTranslatef(1280.0 * 1 * times, 0.0, 0.0);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 28
+			glTranslatef(1280.0 * 1 * times, 0.0, 0.0);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 29
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+
+		// 30
+			glTranslatef(1280.0 * 2 * times, 0.0, 0.0);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 31
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 32
+			glTranslatef(1280.0 * 1 * times, 0.0, 0.0);
+			for (int i = 0; i < 3 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+
+		// 33
+			glTranslatef(1280.0 * 1 * times, 0.0, 0.0);
+			for (int i = 0; i < 4 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 34
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+
+		// 35
+			glTranslatef(1280.0 * 4 * times, 0.0, 0.0);
+			for (int i = 0; i < 2 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 36
+			glTranslatef(1280.0 * 1 * times, 0.0, 0.0);
+			for (int i = 0; i < 1 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+
+		// 37
+		glTranslatef(1280.0 * 2 * times, 0.0, 0.0);
+		for (int i = 0; i < 2 * times; i++){
+			glCallList(457);
+			glTranslatef(1280.0, 0.0, 0.0);
+		}
+		glPopMatrix();
+
+		glTranslatef(0.0, 0.0, 1280.0 * times);
+		glPushMatrix();
+		// 38
+			for (int i = 0; i < 9 * times; i++){
+				glCallList(457);
+				glTranslatef(1280.0, 0.0, 0.0);
+			}
+		glPopMatrix();
+
+	glPopMatrix();
+
+
+	glPopMatrix();
+
 }
 
 void DrawMazeWall(){
-	tp.CreateDisplayList(YZ, 456, 128.0, 128.0, 6514.0, 10000.0, 46744.0, 10.0, 400.0);
-	tp.CreateDisplayList(YZ, 457, 128.0, 128.0, (6514.0+256.0*200.0), 10000.0, 46744.0, 10.0, 380.0);
-	tp.CreateDisplayList(XY, 458, 128.0, 128.0, (6514.0+1280.0), 10000.0, 46744.0, 400.0, 10.0);
-	tp.CreateDisplayList(XY, 459, 128.0, 128.0, 6514.0, 10000.0, (46744.0+128.0*400.0), 400.0, 10.0);
+	
+	tp.CreateDisplayList(YZ, 456, 128.0, 128.0, 6514.0, 10000.0, 46744.0, 10.0, 10.0);
+	tp.CreateDisplayList(XY, 457, 128.0, 128.0, 6514.0, 10000.0, 46744.0, 10.0, 10.0);
+
+	// tp.CreateDisplayList(YZ, 457, 128.0, 128.0, (6514.0+256.0*200.0), 10000.0, 46744.0, 10.0, 380.0);
+	// tp.CreateDisplayList(XY, 458, 128.0, 128.0, (6514.0+1280.0), 10000.0, 46744.0, 400.0, 10.0);
+	//tp.CreateDisplayList(XY, 459, 128.0, 128.0, 6514.0, 10000.0, (46744.0+128.0*400.0), 400.0, 10.0);
+	
 }
 
 //--------------------------------------------------------------------------------------
@@ -5182,8 +5530,8 @@ void CreateTextureList()
 	DrawCylinders ();			// 437-441
 	DrawMapExit ();				// 448-449, 454
 	DrawMazeGround();			// 455
-	DrawMazeWall();				// 456
-	// 457-459
+	DrawMazeWall();				// 456,457
+	// 458-459
 }
 
 
@@ -5201,7 +5549,7 @@ void IncrementFrameCount()
 	if (t > 0.1)
 	{
 		stepIncrement = t/frameCount * 10000;
-		angleIncrement = t/frameCount;
+		angleIncrement = t/frameCount * 3;
 		frameCount = 0;
 		lastClock = clock();
 	}
